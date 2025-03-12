@@ -13,12 +13,13 @@ import (
 	"github.com/justhumanz/s3-obfuscation/pkg"
 )
 
-const Index = "/tmp/index"
+var Index = "/tmp/index"
 
 type S3List struct {
 	S3Session  *session.Session
 	S3Download *s3manager.Downloader
 	S3Base     pkg.S3Base
+	SaveIndex  bool
 }
 
 // List the obj on selected bucket
@@ -26,6 +27,10 @@ func (s *S3List) ListBkt() {
 	s.S3Download = s3manager.NewDownloader(s.S3Session)
 
 	indexFile := s.GetIndex()
+	if s.SaveIndex {
+		Index = "index"
+	}
+
 	err := pkg.DecryptFile(indexFile, Index, s.S3Base.GpGpass)
 	if err != nil {
 		fmt.Println("Error:", err)
@@ -37,8 +42,11 @@ func (s *S3List) ListBkt() {
 		fmt.Println("Error opening file:", err)
 		return
 	}
+
 	defer file.Close()
-	defer os.Remove(Index)
+	if !s.SaveIndex {
+		defer os.Remove(Index)
+	}
 
 	data := make(map[string]interface{})
 	decoder := json.NewDecoder(file)

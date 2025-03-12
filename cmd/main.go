@@ -82,12 +82,16 @@ func main() {
 	switch cmd {
 	case _list:
 		//Get list of bkt object
+		flag := flag.NewFlagSet(_list, flag.ExitOnError)
+		saveList := flag.Bool("s", false, "Save decrypted index file into your local")
+		flag.Parse(args)
 		S3List := s3list.S3List{
 			S3Session: sess,
 			S3Base: pkg.S3Base{
 				BktName: bkt_name,
 				GpGpass: Pass,
 			},
+			SaveIndex: *saveList,
 		}
 
 		S3List.ListBkt()
