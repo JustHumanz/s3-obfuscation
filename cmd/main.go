@@ -124,6 +124,7 @@ func main() {
 		}
 
 	case _put:
+		//Upload obj into bkt
 		Upload := s3put.S3Put{
 			S3Session: sess,
 			S3Base: pkg.S3Base{
@@ -136,6 +137,7 @@ func main() {
 		Upload.UploadFile()
 
 	case _del:
+		//Delete obj in bkt
 		Delete := s3del.S3Del{
 			S3Session: sess,
 			S3Base: pkg.S3Base{
@@ -148,6 +150,7 @@ func main() {
 		Delete.DeleteObj()
 
 	case _init:
+		//Init bkt to enable s3 obfuscation
 		reader := bufio.NewReader(os.Stdin)
 		fmt.Println("This action will remove your existing index file, run this only once (y/n)")
 		for {
